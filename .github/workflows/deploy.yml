@@ -1,0 +1,37 @@
+name: Deploy FastAPI to VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Replace with the actual requirements file if applicable
+
+    - name: Deploy to VM
+      run: |
+        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} azureuser@20.205.138.157 'bash -s' < deploy.sh
+      env:
+        FASTAPI_HOST: "0.0.0.0"
+        FASTAPI_PORT: "80"
+
+    - name: Test Deployment
+      run: |
+        response=$(curl -s http://20.205.138.157/sayHello)
+        if [[ "$response" == *"Hello User"* ]]; then
+          echo "Deployment successful!"
+        else
+          echo "Deployment failed. Unexpected response: $response"
+          exit 1
+        fi
+
