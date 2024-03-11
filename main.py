@@ -4,7 +4,7 @@ app = FastAPI()
 
 
 @app.get("/sayHello")
-async def root():
+async def say_hello():
     return {
         "message": "Hello User."
     }
