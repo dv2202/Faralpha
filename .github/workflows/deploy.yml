@@ -2,36 +2,32 @@ name: Deploy FastAPI to VM
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  ssh:
+    name: script-runner
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Rebuild & Update
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt  # Replace with the actual requirements file if applicable
+          script: |
+            # Check if the repository is already cloned
+            if [ ! -d "Faralpha" ]; then
+                # Clone the repository if not already cloned
+                git clone https://github.com/dv2202/Faralpha.git
+            fi
 
-    - name: Deploy to VM
-      run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} azureuser@20.205.138.157 'bash -s' < deploy.sh
-      env:
-        FASTAPI_HOST: "0.0.0.0"
-        FASTAPI_PORT: "80"
+            # Move into the cloned directory
+            cd Faralpha
 
-    - name: Test Deployment
-      run: |
-        response=$(curl -s http://20.205.138.157/sayHello)
-        if [[ "$response" == *"Hello User"* ]]; then
-          echo "Deployment successful!"
-        else
-          echo "Deployment failed. Unexpected response: $response"
-          exit 1
-        fi
-
+            # Run the bash script
+            bash deploy.sh
