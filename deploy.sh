@@ -10,4 +10,4 @@ sudo docker rm "faralpha"
 
 sleep 2
 
-sudo docker run -d -p 80:80 --name "faralpha" "faralpha"
+sudo docker run -d -p 8000:8000 --name "faralpha" "faralpha"
