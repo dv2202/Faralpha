@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# Activate virtual environment
-source venv/bin/activate
+git pull
 
-# Install Python dependencies
-pip install -r requirements.txt
+sudo docker build -t "faralpha" .
 
-# Restart FastAPI application
-supervisorctl restart fastApiProject
+sudo docker stop "faralpha"
+
+sudo docker rm "faralpha"
+
+sleep 2
+
+sudo docker run -d -p 8000:8000 --name "faralpha" "faralpha"
