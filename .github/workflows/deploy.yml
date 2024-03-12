@@ -31,3 +31,6 @@ jobs:
 
             # Run the bash script
             bash deploy.sh
+
+          env:
+            VERBOSE: true
