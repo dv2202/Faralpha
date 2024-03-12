@@ -1,9 +1,6 @@
 name: Deploy FastAPI to VM
 
 on:
-  push:
-    branches: [main]
-
   workflow_dispatch:
 
 jobs:
@@ -20,17 +17,7 @@ jobs:
           port: 22
 
           script: |
-            # Check if the repository is already cloned
-            if [ ! -d "Faralpha" ]; then
-                # Clone the repository if not already cloned
-                git clone https://github.com/dv2202/Faralpha.git
-            fi
-
-            # Move into the cloned directory
             cd Faralpha
 
             # Run the bash script
             bash deploy.sh
-
-          env:
-            VERBOSE: true
